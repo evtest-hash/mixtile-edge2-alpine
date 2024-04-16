@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -eux
+
+root_uuid=$(cat /proc/cmdline | grep -oP 'root=PARTUUID=\K[^ ]+')
+root_device=$(blkid -l -o device -t PARTUUID="$root_uuid")
+mmc_device=$(echo "$root_device" | sed 's/p.*$//')
+
+echo Yes | parted ---pretend-input-tty $mmc_device resizepart 2 '100%'
+partprobe
+resize2fs $root_device
+
+apk del resizepart
+rc-update del first-boot sysinit
+rm /etc/init.d/first-boot /usr/bin/first-boot
+
