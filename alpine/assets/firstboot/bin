@@ -13,4 +13,4 @@ resize2fs $root_device
 apk del resizepart
 rc-update del first-boot sysinit
 rm /etc/init.d/first-boot /usr/bin/first-boot
-
+sync
